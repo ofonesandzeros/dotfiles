@@ -1,23 +1,52 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 set -e
 
-command="${1}"
+command="${1:-}"
 
-# Shift the first argument off, as we are using that.
-# http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_09_07.html
-shift
+if [ -z "${DOTFILES_LOCATION}" ]; then
+  DOTFILES_LOCATION="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+  export DOTFILES_LOCATION
+fi
 
 case "${command}" in
   "install")
-    package="${1}"
-    echo "🚀 Installing package: ${package}"
-    (cd "${DOTFILES_LOCATION}/${package}" && ./install.sh)
-    echo "\n"
+    package="${2:-}"
+    if [ -z "${package}" ] || [ "${package}" = "all" ]; then
+      echo "🚀 Installing all packages..."
+      for pkg in tmux starship fzf zsh bash; do
+        if [ -d "${DOTFILES_LOCATION}/${pkg}" ] && [ -f "${DOTFILES_LOCATION}/${pkg}/install.sh" ]; then
+          echo "📦 [${pkg}]"
+          (cd "${DOTFILES_LOCATION}/${pkg}" && bash ./install.sh)
+          echo ""
+        fi
+      done
+    else
+      if [ -d "${DOTFILES_LOCATION}/${package}" ] && [ -f "${DOTFILES_LOCATION}/${package}/install.sh" ]; then
+        echo "🚀 Installing package: ${package}"
+        (cd "${DOTFILES_LOCATION}/${package}" && bash ./install.sh)
+        echo ""
+      else
+        echo "❌ Package '${package}' not found in ${DOTFILES_LOCATION}."
+        exit 1
+      fi
+    fi
+    ;;
+  "list")
+    echo "Available packages in dotfiles:"
+    for dir in "${DOTFILES_LOCATION}"/*/; do
+      pkg="$(basename "$dir")"
+      if [ -f "${DOTFILES_LOCATION}/${pkg}/install.sh" ]; then
+        echo "  - ${pkg}"
+      fi
+    done
     ;;
   *)
-    echo "${command} does not exist"
-  exit 1
+    echo "Usage: $0 {install [package]|list}"
+    echo ""
+    echo "Commands:"
+    echo "  install [package]   Install specific package or all if omitted"
+    echo "  list                List available packages"
+    exit 1
     ;;
 esac
-
