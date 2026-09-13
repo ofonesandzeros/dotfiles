@@ -31,7 +31,18 @@ zstyle ':completion:*' verbose true
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
+# Homebrew environment (macOS Apple Silicon & Intel)
+if [ -x "/opt/homebrew/bin/brew" ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x "/usr/local/bin/brew" ]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# PATH configuration
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+
 # Starship prompt
+export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
@@ -40,9 +51,6 @@ fi
 if command -v fzf >/dev/null 2>&1; then
   eval "$(fzf --zsh)"
 fi
-
-# PATH configuration
-export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 
 # Editor configuration
 if command -v nvim >/dev/null 2>&1; then
