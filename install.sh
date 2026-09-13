@@ -16,5 +16,6 @@ export DOTFILES_LOCATION
 ./bin/dotfiles install fzf
 ./bin/dotfiles install zsh
 ./bin/dotfiles install bash
+./bin/dotfiles install nvim
 
 echo "✨ All dotfiles configurations installed successfully!"

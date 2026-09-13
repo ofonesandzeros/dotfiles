@@ -12,9 +12,13 @@ fi
 case "${command}" in
   "install")
     package="${2:-}"
+    if [ "${package}" = "nvchad" ]; then
+      package="nvim"
+    fi
+
     if [ -z "${package}" ] || [ "${package}" = "all" ]; then
       echo "🚀 Installing all packages..."
-      for pkg in tmux starship fzf zsh bash; do
+      for pkg in tmux starship fzf zsh bash nvim; do
         if [ -d "${DOTFILES_LOCATION}/${pkg}" ] && [ -f "${DOTFILES_LOCATION}/${pkg}/install.sh" ]; then
           echo "📦 [${pkg}]"
           (cd "${DOTFILES_LOCATION}/${pkg}" && bash ./install.sh)

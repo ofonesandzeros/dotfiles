@@ -43,3 +43,9 @@ fi
 
 # PATH configuration
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+
+# Editor configuration
+if command -v nvim >/dev/null 2>&1; then
+  export EDITOR="nvim"
+  alias vim="nvim"
+fi
